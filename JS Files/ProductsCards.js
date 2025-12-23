@@ -1,0 +1,438 @@
+const productsContainer = document.getElementById('products');
+const categoryNav = document.getElementById('category-nav');
+const searchInput = document.getElementById('search-input');
+const searchButton = document.getElementById('search-button');
+const cartIcon = document.getElementById('cart-icon');
+const purchasesMenu = document.getElementById('purchases-menu');
+const categoryList= document.getElementById('category-list');
+const productsDataTable = document.getElementById('products-data-table');
+const buttonClickedContainer = document.getElementById('buttonClickedContainer');
+const dialog = document.getElementById("editDialog");
+const productNameInput = document.getElementById('product_name');
+const imageSrcInput = document.getElementById('Image_src');
+const unitQuantityInput = document.getElementById('unit_quantity');
+const unitInput = document.getElementById('unit');
+const oldPriceInput = document.getElementById('old_price');
+const discountInput = document.getElementById('discount');
+const stockLimitInput = document.getElementById('stock_limit');
+const featuredProducts = document.getElementById('featured-products');
+const navFeaturedProductList = document.getElementById('nav-list');
+const swiperWrapper = document.getElementById('latest-products-container');
+const upcomingProductsContainer = document.getElementById('upcoming-products-container');
+const upcomingProducts = document.getElementById('upcoming-products');
+
+
+class Product{
+    constructor(discount,image,name,unitQuantity,unit,oldPrice,stock){
+        this.discount = discount;
+        this.image = image;
+        this.name = name;
+        this.unitQuantity = unitQuantity;
+        this.unit = unit;
+        this.oldPrice = oldPrice;
+        this.newPrice = this.oldPrice - ((this.oldPrice * this.discount)/100 ).toFixed(0);
+        this.stockLimit = stock;
+    }
+    returnProductCard(){
+        const createProductCard = document.createElement('div');
+        createProductCard.className='product-card';
+        const createProductMedia = document.createElement('div');
+        createProductMedia.className ='product-media';
+
+        const createDiscountContainer = document.createElement('div');
+        createDiscountContainer.className='product-Off';
+
+        const createOffElement = document.createElement('span');
+        createOffElement.textContent = `${this.discount}% Off`;
+
+        const createImgContainer = document.createElement('div');
+        createImgContainer.className='product-image';
+
+        const createImage = document.createElement('img');
+        createImage.src = this.image;
+
+        createDiscountContainer.appendChild(createOffElement);
+        createImgContainer.appendChild(createImage);
+        createProductMedia.append(createDiscountContainer,createImgContainer);
+        
+        const createProductContent = document.createElement('div');
+        createProductContent.className='product-content';
+        const createProductDetails = document.createElement('div');
+        createProductDetails.className='productName-unit-price';
+
+        const createProductName = document.createElement('h5');
+        createProductName.className='productName';
+        createProductName.textContent = this.name;
+        const createUnit = document.createElement('h5');
+        createUnit.className='unit';
+        createUnit.textContent = this.unitQuantity + this.unit;
+        const createOldPrice = document.createElement('h5');
+        createOldPrice.className='oldPrice';
+        createOldPrice.textContent = `${this.oldPrice} $`;
+        const createNewPrice = document.createElement('h5');
+        createNewPrice.className='newPrice';
+        createNewPrice.textContent = `${this.newPrice} $`;
+        createProductDetails.append(createProductName,createUnit,createOldPrice,createNewPrice)
+        createProductContent.append(createProductDetails);
+         
+        const createButtonContainer = document.createElement('div');
+        createButtonContainer.className='add-button';
+
+        const createButton = document.createElement('button');
+        createButton.type = 'button';
+        createButton.textContent = 'Add';
+        createButtonContainer.appendChild(createButton);
+        createProductContent.appendChild(createButtonContainer);
+        createButtonContainer.addEventListener('click',()=> Cart.addProduct(this));
+        if(this.stockLimit === 0){
+            createProductCard.style.backgroundColor='rgba(128, 128, 128, 0.196)';
+            createProductCard.style.opacity='0.6';
+
+            const createStockLimitContainer = document.createElement('span');
+            createStockLimitContainer.textContent = 'Out Of Stock';
+            createStockLimitContainer.classList.add('outOfStock');
+            createProductCard.appendChild(createStockLimitContainer);
+        }
+        createProductCard.append(createProductMedia,createProductContent); 
+        return createProductCard;    
+    }
+    displayProduct(){
+        productsContainer.append(this.returnProductCard());
+    }
+    // Admin Method
+    displayManageProducts(){
+        const createRow = document.createElement('tr');
+
+        const createNamesColumn = document.createElement('td');
+        createNamesColumn.textContent = this.name;
+        const createImagesColumn = document.createElement('td');
+        const createImage = document.createElement('img')
+        createImage.src = this.image;
+        createImagesColumn.appendChild(createImage);
+        const createUnitColumn = document.createElement('td');
+        createUnitColumn.textContent = this.unitQuantity + this.unit;
+        const createOldPriceColumn = document.createElement('td');
+        createOldPriceColumn.textContent = `${this.oldPrice} $`;
+        const createDiscountColumn = document.createElement('td');
+        createDiscountColumn.textContent = `${this.discount} %`;
+        const createNewPriceColumn = document.createElement('td');
+        createNewPriceColumn.textContent = `${this.newPrice} $`;
+        const createStockColumn = document.createElement('td');
+        const stockColumnContainer = document.createElement('div');
+
+        createStockColumn.className='status';
+        if(this.stockLimit === 0){
+            stockColumnContainer.textContent = 'OUTOFSTOCK';
+            stockColumnContainer.classList.add('outOfStock')
+        }
+        else if(this.stockLimit <= 200){
+            stockColumnContainer.textContent = 'LOWSTOCK';
+            stockColumnContainer.classList.add('lowStock')
+        }
+        else{
+            stockColumnContainer.textContent = 'INSTOCK';
+            stockColumnContainer.classList.add('inStock')
+        }
+        createStockColumn.appendChild(stockColumnContainer);
+        const createIcons = document.createElement('td')
+        createIcons.className ='edit-trash_icon';
+        const createEditIcon = document.createElement('i');
+        createEditIcon.className='fa-solid fa-pencil'; 
+        createEditIcon.addEventListener("click",() => {
+            Store.editProduct(this);
+            dialog.showModal();
+        }); 
+        const createTrashIcon = document.createElement('i');
+        createTrashIcon.className ='fa-solid fa-trash';
+        createTrashIcon.addEventListener('click',()=> Store.deleteProduct(this));
+        createIcons.append(createEditIcon,createTrashIcon);
+        createRow.append(createNamesColumn,createImagesColumn,createUnitColumn,createOldPriceColumn,createDiscountColumn,createNewPriceColumn,createStockColumn,createIcons);
+        productsDataTable.appendChild(createRow);
+       }
+
+    displayLatestProducts(){
+        const latestProductContainer = document.createElement('div');
+        latestProductContainer.className = 'swiper-slide';
+        latestProductContainer.append(this.returnProductCard());
+        swiperWrapper.append(latestProductContainer);
+    }
+}
+// Exotic Vegetables Products ..
+const lotus = new Product(20,'/Images/lotus stem.jpg','Lotus stem',250,' Gm',55,1000);
+const achari = new Product(44,'/Images/achari.webp','Achari Mirch',250,' Gm',27,2000);
+const mushroom = new Product(37,'/Images/mushroom.png','Mushroom Button (200 Gm)',1,' Piece',80,300);
+const broccoli = new Product(71,'/Images/broccoli.png','Broccoli',350,' Gm',49,0);
+const cucumber = new Product(62,'/Images/cucumber.webp','English Cucumber',500,' Gm',40,8000);
+const cholia = new Product(53,'/Images/green cholia.webp','Green Cholia(200 Gm)',1,' Piece',86,20);
+const sprouts = new Product(56,'/Images/sprouts.png','Sprouts Chana Brown',1,' Piece',41,100);
+const corn = new Product(58,'/Images/sweet corn.webp','Sweet Corn Peeled (200 Gm)',1,' Pack',60,100);
+const sproutsMoong = new Product(63,'/Images/sproots moong.webp','Sprouts Moong',1,' Piece',49,0);
+const sproutsMixed = new Product(55,'/Images/sprouts mixed.webp','Sprouts Mixed Gram',1,' Piece',40,888);
+
+// Fresh Fruits..
+const belPatra = new Product(40,'/Images/bel patra.png','Bel Patra',1,' Piece',50,100);
+const kiwi = new Product(53,'/Images/kiwi.png','Kiwi',1,' Piece',60,200);
+const kinnaur = new Product(48,'/Images/kinnaur.png','Kinnaur Apple',500,' Gm',175,300);
+const greenGrapes = new Product(38,'/Images/green grapes.jpg','Green Grapes',450,' Gm',90,800);
+const mango = new Product(56,'/Images/mango safeda.png','Mango Safeda',1,' Piece',57,20);
+const peachIndian = new Product(33,'/Images/peach.jpg','Peach Indian',500,' Gm',90,1099);
+const pineapple = new Product(45,'/Images/pineapple.jpg','Pineapple',1,' Piece',120,100);
+const pomegranate = new Product(52,'/Images/pomegranate.png','Pomegranate',500,' Gm',49,5000);
+const thaiGuava = new Product(60,'/Images/thai guava.jpg','Thai Guava',1,' Piece',40,88);
+//const dragonFruitProduct = new Product(42,'/Images/dragon.png','Dragon Fruit',1,' Piece',40,100);
+
+// Exotic Fruits ..
+const avocado = new Product(41,'/Images/avocado.png','Avocado',1,' Piece',60,400);
+const dragonFruit = new Product(42,'/Images/dragon.png','Dragon Fruit',1,' Piece',40,100);
+const mandarin = new Product(35,'/Images/mandarin.png','Mandarin Orange',500,' Gm',75,30);
+const mangoDasheri = new Product(42,'/Images/mango_dasheri.png','Mango Dasheri',700,' Gm',139,10);
+const orangeImported = new Product(59,'/Images/orange_imported.png','Orange Imported',400,' Gm',60,800);
+const strawberry = new Product(30,'/Images/strawberry.png','Strawberry(200 Gm)',1,' Piece',55,0);
+const sweetTamarind = new Product(22,'/Images/sweet_tamarind.png','Sweet Tamarind',1,' Piece',33,199);
+
+// Fresh Vegetables ..
+const greenPeas = new Product(62,'/Images/green_peas.png','Green Peas',250,' Gm',62,2200);
+const onion = new Product(35,'/Images/onion.png','Onion',1,' Kg',45,100);
+const cauliflower = new Product(52,'/Images/cauliflower.png','Cauliflower',1,' Piece',20,300);
+const betroot = new Product(51,'/Images/beetroot.png','Betroot',650,' Gm',31,10);
+const carrot = new Product(40,'/Images/carrot.png','Carrot Orange',500,' Gm',50,500);
+const desiTomato = new Product(78,'/Images/desi_tomato.png','Desi Tomato',1,' Kg',74,600);
+
+// Leaf & Herbs ..
+const coriander = new Product(27,'/Images/coriander.png','Coriander Leaves',250,' Gm',20,400);
+const curryLeaves = new Product(46,'/Images/curry.png','Curry Leaves',150,' Gm',20,2000);
+const garlic = new Product(50,'/Images/garlic.png','Garlic',250,' Gm',75,300);
+const greenChili = new Product(70,'/Images/chili.png','Green Chili',200,' Gm',40,100);
+const lemon = new Product(12,'/Images/lemon.png','Lemon',150,' Gm',36,80);
+const mintLeaves = new Product(60,'/Images/mint.png','Mint Leaves',100,' Gm',20,200);
+const springOnion = new Product(62,'/Images/spring_onion.png','Spring Onion',500,' Gm',66,199);
+const ginger = new Product(41,'/Images/ginger.png','Ginger',200,' Gm',30,1000);
+const spinach = new Product(88,'/Images/spinach.png','Spinach',500,' Gm',49,5000);
+
+const arrayOfVegetables = [lotus,achari,mushroom,broccoli,cucumber,cholia,sprouts,corn,sproutsMoong,sproutsMixed];
+const arrayOfFruits= [belPatra,kiwi,kinnaur,dragonFruit,greenGrapes,mango,peachIndian,pineapple,pomegranate,thaiGuava];
+const arrayOfExoticFruits = [avocado,dragonFruit,mandarin,mangoDasheri,orangeImported,strawberry,sweetTamarind];
+const arrayOfFreshVegetables = [greenPeas,onion,cauliflower,betroot,carrot,desiTomato,mushroom,sproutsMixed,sproutsMoong,sprouts,lotus,cucumber,broccoli,cholia,achari,corn];
+const arrayOfleafHerbs = [coriander,curryLeaves,garlic,greenChili,lemon,mintLeaves,springOnion,ginger,spinach];
+
+/** Meat Products **/
+const beefMeat = new Product(20,'/Images/beef_meat-removebg.png','Beef Meat',1,'Kilo',20,3000);
+const goatMeat = new Product(40,'/Images/goat_meat R bg.png','Goat Meat',1,'Kilo',68,1000)
+const vealMeat = new Product(10,'/Images/Veal meat.png','Veal Meat',1,'Kilo',40,199);
+const lambMeat = new Product(22,'/Images/Lamb_meat R bg.png','Lamb Meat',1,'Kilo',35,10001);
+const chickenMeat = new Product(15,'/Images/chicken_meat R bg.png','Chicken Meat',1,'Kilo',37,444);
+const camelMeat = new Product(33,'/Images/camel_meat R bg.png','Camel Meat',1,'Kilo',72,0);
+/** Orange Products **/
+const bloodOrange = new Product(33,'/Images/bloodOrange R bg.png','Blood Orange',250,' Gm',12,400);
+const caraCaraOrange = new Product(9,'/Images/caraCaraNavelOrange R bg.png','Cara Cara Navel Orange',250,' Gm',8,7);
+const sevilleOrange = new Product(10,'/Images/seville_orange R bg.png','Seville Orange',250,' Gm',23,2000);
+const tangeloOrange = new Product(13,'/Images/tangelos_orange R bg.png','Tangelo Orange',250,' Gm',7,1300);
+const valenciaOrange = new Product(12,'/Images/valencia-orange R bg.png','Valencia Orange',250,' Gm',5,0);
+/** Fast Food **/
+const waffles = new Product(17,'/Images/waffles.png','Waffles',1,' Piece',20,300);
+const twisterSandwich = new Product(11,'/Images/twister-sandwich.png','Twister Sandwich',1,' Piece',19,44);
+const panCake = new Product(20,'/Images/pancake.png','Pancake',1,' Pack',30,111);
+const hotShotsBucket = new Product(33,'/Images/hot-shots-bucket.png','Hot Shots Bucket',1,' Pack',26,98);
+const burgerCroque = new Product(9,'/Images/burger-croque.png','Burger Croque',1,' Piece',24,0);
+const smallPizza  = new Product(5,'/Images/small-pizza.png','Small Pizza',1,' Pack',17,1000);
+// Latest Products variables ..
+const tomatoPaste = new Product(10,'/Images/tomato_pack.png','Tomato Paste',1,' Piece',22,12);
+const dubaiChocolate = new Product(7,'/Images/dubai_chocolate.png','Dubai Chocolate',1,' Piece',15,4);
+const chips = new Product(4,'/Images/chips.png','Chips',1,' Piece',7,1000);
+const bread = new Product(3,'/Images/bread.png','Bread',1,' Piece',5.50);
+const butter = new Product(22,'/images/butter.png','Butter',1,' Piece',23,200)
+const cheese = new Product(12,'/Images/cheese.png','Cheese',1,' Piece',20,15);
+const chocolate = new Product(13,'/Images/chocolate.png','Chocolate',1,' Piece',20,3);
+const couscous = new Product(32,'/Images/couscous.png','Couscous',1,' Piece',18,100);
+const pasta = new Product(9,'/Images/pasta.png','Pasta',1,' Piece',10,0);
+
+const meatsArray = [beefMeat,goatMeat,vealMeat,lambMeat,chickenMeat,camelMeat];
+const orangesArray = [bloodOrange,caraCaraOrange,sevilleOrange,tangeloOrange,valenciaOrange];
+const fastFoodArray = [waffles,twisterSandwich,panCake,hotShotsBucket,burgerCroque,smallPizza];
+const latestProductsArray = [tomatoPaste,dubaiChocolate,chips,bread,butter,cheese,chocolate,couscous,pasta];
+
+class Store{
+    static products = new Map([
+        ['Exotic Vegetables',arrayOfVegetables],
+        ['Fresh Fruits',arrayOfFruits],
+        ['Exotic Fruits',arrayOfExoticFruits],
+        ['Fresh Vegetables',arrayOfFreshVegetables],
+        ['Leaf & Herbs',arrayOfleafHerbs],
+        ['Meat',meatsArray],
+        ['Oranges',orangesArray],
+        ['Fast Food',fastFoodArray],
+        ['Latest Products', latestProductsArray],
+    ]);
+   static changeCategory(category){
+        const arrayOfProducts = this.products.get(category);
+        if(document.title === 'Document'){
+            productsContainer.innerHTML='';
+            arrayOfProducts.forEach(product=>{
+                product.displayProduct();
+            });
+        }    
+        else if(document.title === 'Admin'){
+            productsDataTable.innerHTML='';
+            const createThead = document.createElement('thead');
+            const createTitlesRow = document.createElement('tr');
+            const createNameTitle = document.createElement('th');
+            createNameTitle.textContent = 'Name';
+            const createImageTitle = document.createElement('th');
+            createImageTitle.textContent = 'Image';
+            const createUnitTitle = document.createElement('th');
+            createUnitTitle.textContent = 'Unit';
+            const createOldPriceTitle = document.createElement('th');
+            createOldPriceTitle.textContent = 'Old Price';
+            const createDiscountTitle = document.createElement('th');
+            createDiscountTitle.textContent = 'Discount';
+            const createNewPriceTitle = document.createElement('th');
+            createNewPriceTitle.textContent = 'New Price';
+            const createStockTitle = document.createElement('th');
+            createStockTitle.textContent = 'Stock Limit';
+            const createEmptyTd = document.createElement('th');
+            createTitlesRow.append(createNameTitle,createImageTitle,createUnitTitle,createOldPriceTitle,createDiscountTitle,createNewPriceTitle,createStockTitle,createEmptyTd);
+            createThead.appendChild(createTitlesRow);
+            productsDataTable.append(createThead);
+            arrayOfProducts.forEach(product=>{
+                product.displayManageProducts();
+            })
+        }
+    }
+    static displayCategoryButtons(){
+        for(const item of Store.products.keys()){
+            const createCategory = document.createElement('li');
+            createCategory.className = 'nav-item';
+            createCategory.textContent = item;
+            createCategory.addEventListener('click',function(){
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(i => i.classList.remove('active'));
+                createCategory.classList.add('active');
+                Store.changeCategory(item);
+                const displayButtonClicked = document.createElement('h3');
+                displayButtonClicked.textContent = `${item} :`;
+                buttonClickedContainer.innerHTML='';
+                buttonClickedContainer.appendChild(displayButtonClicked);
+            });
+            if(document.title === 'Document'){
+                categoryNav.appendChild(createCategory);
+            }
+            else if(document.title === 'Admin'){
+                categoryList.appendChild(createCategory);
+            }
+        }        
+    }
+    static filteredProducts(){
+        const values = Store.products.values();
+        const mapToArray =  Array.from(values);
+        const mergeArrays = mapToArray.flat();
+        const inputValueLowerCase = searchInput.value.toLowerCase().replace(" ","");  
+        const searchProducts =  mergeArrays.filter(product=> product.name.toLowerCase().replace(" ","").includes(inputValueLowerCase));
+        const uniqueProducts = new Set(searchProducts);
+        productsContainer.innerHTML='';
+        uniqueProducts.forEach( item =>{
+            item.displayProduct()
+        });
+    }
+    static showMenu(){
+        purchasesMenu.classList.toggle('displayMenu');
+    }
+    static editProduct(product){ 
+        productNameInput.value = product.name;
+        imageSrcInput.value = product.image;
+        unitQuantityInput.value = product.unitQuantity;
+        unitInput.value = product.unit;
+        oldPriceInput.value = product.oldPrice ;
+        discountInput.value = product.discount;
+        stockLimitInput.value = product.stockLimit;
+    }
+    static deleteProduct(category,product){
+        console.log(category,product);
+    }
+}
+Store.displayCategoryButtons();
+if(document.title === 'Document'){
+    searchButton.addEventListener('click',()=>Store.filteredProducts());
+    cartIcon.addEventListener('click',()=>Store.showMenu());
+}
+class Cart {
+   static cartItems = new Map();
+
+   static addProduct(namePro){
+     let current = this.cartItems.get(namePro.name) || 0;
+     this.cartItems.set( namePro.name , ++current);
+     const productContainer = document.createElement('div');
+     productContainer.className ='productContainer';
+     let product = document.getElementById(namePro.name);
+     if(!product){
+          product = document.createElement('h3');
+          product.id = namePro.name;
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Delete';
+          deleteButton.addEventListener('click',(event)=>{
+               this.cartItems.delete(namePro.name);
+               event.target.closest('div').remove()
+               console.log(this.cartItems)
+            })
+         productContainer.append(product,deleteButton)
+         purchasesMenu.append(productContainer);
+        }
+     product.textContent = `${namePro.name} ${namePro.newPrice} $ x ${ current}`;
+    }
+}
+
+/**
+ * Latest Products Section
+*/
+latestProductsArray.forEach((product)=>{
+    product.displayLatestProducts();
+});
+
+// Initialize Swiper 
+var swiper = new Swiper(".mySwiper", {
+    slidesPerView: 4,
+    centeredSlides: true,
+    spaceBetween: 30,
+    grabCursor: true,
+    pagination: {
+     el: ".swiper-pagination",
+     clickable: true,
+    },
+});
+
+
+/**
+ * Upcoming Products Section..
+ */
+class UpcomingProducts{
+    constructor(imagePath,name){
+        this.status = 'Coming Soon';
+        this.imagePath = imagePath;
+        this.name = name;
+    }
+    displayUpcomingProducts(){
+        const upcomingProductCard = document.createElement('div');
+        upcomingProductCard.className = 'upcoming-product-card';
+        const statusContainer = document.createElement('span');
+        statusContainer.textContent = this.status;
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'imageContainer';
+        const image = document.createElement('img');
+        image.src = this.imagePath;
+        imageContainer.appendChild(image);
+        const nameProduct = document.createElement('h3');
+        nameProduct.textContent = this.name;
+        upcomingProductCard.append(statusContainer,imageContainer,nameProduct);
+        upcomingProducts.appendChild(upcomingProductCard);
+        upcomingProductsContainer.appendChild(upcomingProducts);
+    }
+}
+
+const jojobaOil = new UpcomingProducts('/Images/jojoba-oil-bg.png','Jojoba Oil');
+const sesameOil = new UpcomingProducts('/Images/sesame-oil-bg.png','Sesame Oil');
+const thyme = new UpcomingProducts('/Images/thyme-oil-bg.png','Thyme Oil');
+const rocketOil = new UpcomingProducts('/Images/rocket-oil-bg (6).png','Rocket Oil');
+const oliveOil = new UpcomingProducts('/Images/olive-oil-bg.png','Olive Oil');
+const flaxseedOil = new UpcomingProducts('/Images/flaxseed-oil-bg (5).png','Flaxseed Oil');
+
+const upcomingProductsArray = [jojobaOil,sesameOil,thyme,rocketOil,oliveOil,flaxseedOil];
+upcomingProductsArray.forEach(product=>product.displayUpcomingProducts());

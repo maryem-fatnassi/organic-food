@@ -1,0 +1,418 @@
+/* Website Header and Navigation Menu */
+ *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: arial;
+  }
+  /* Website Header */
+    .header{
+      display: flex;
+      justify-content: space-between;
+      background-color: rgba(128, 128, 128, 0.096);
+      height: 60px;  
+    }
+    .info, .icons-languages-login-container, .usa{
+       display: flex;
+    }
+    .info{
+      transform: translateY(20px);
+      margin-left: 100px;
+      position: relative;
+    }
+    p.free{
+      margin-left: 30px;
+    }
+    p.free::before{
+      content: '';
+      width: 1px;
+      height: 20px;
+      background-color: rgba(128, 128, 128, 0.562);
+      position: absolute;
+      left:170px;
+    }
+    .usa img{
+      width: 35px;
+      height: 25px;
+      margin-top: -3px;
+      transform: translateX(-8px);
+    }
+    .icons-languages-login-container{
+      transform: translateY(20px);
+    }
+    .icons{
+      margin-right: 60px;
+    }
+    .langue{
+      margin-right: 70px;
+    }
+    .login{
+      margin-right: 90px;
+    }
+    .langue .languages{
+      background-color: black;
+      border: 1px solid #fff;
+      color: #fff;
+      padding-top: 5px ;
+      padding-bottom: 5px;
+      padding-left: 8px;
+      cursor: pointer;
+      transform: translateY(25px);
+      width: 90px;
+    }
+    div.langue .languages{
+      visibility: hidden;
+    }
+   .languages p{
+      padding: 4px 0;
+    }
+    div.langue::before{
+      content: '';
+      width: 1px;
+      height: 20px;
+      background-color: rgba(128, 128, 128, 0.562);
+      position: absolute;
+      left:170px;
+    }
+    div.login::before{
+      content: '';
+      width: 1px;
+      height: 20px;
+      background-color: rgba(128, 128, 128, 0.562);
+      position: absolute;
+      right:180px;
+    }
+   div.icons i{
+      padding: 0 10px;
+    }
+    .login i{
+      transform: translateX(-10px);
+    }  
+    .langue .usa{
+      cursor: pointer;
+    }
+   .langue:hover .languages{
+      visibility: visible;
+      transform: translateY(-4px);
+      transition: transform 0.3s linear;
+    }
+  /* Navigation Menu */ 
+   .nav-container{
+      height: 70px;
+      justify-content: space-between;
+      display: flex;
+      margin-top: 15px;
+    }
+    .nav-container .item{
+      display: flex;
+      line-height: 70px;
+    }
+    div.image img{
+      width: 150px;
+      height: 50px;
+      margin-left: 85px;
+      transform: translateY(20px);
+    }
+   .links{
+      margin-left: 55px;
+    }
+    .links > a{
+      line-height: 90px;
+      display: inline-block;
+      text-decoration: none;
+      color: #000;
+      font-size: 18px;
+      font-weight: bolder;
+      padding: 5px 25px;
+    }
+    .shop{
+      position: relative;
+    }
+    .shop > a{ 
+      line-height: 90px;
+      display: inline-block;
+      text-decoration: none;
+      color: #000;
+      font-size: 18px;
+      font-weight: bolder;
+      padding: 5px 25px;
+    }
+    .nav-container .item{
+      margin-right: 78px;
+    }
+    .links{
+      display: flex;
+    }
+    div.links{
+      position: relative;
+    }
+    .nav-container .links .pages a{
+      display: inline-block;
+      text-decoration: none;
+      padding: 10px 13px;
+      color: #fff;
+    }
+    .pages{ 
+      background-color: #000;
+      width: 180px;
+      position: absolute;
+      visibility: hidden;
+      opacity: 0;
+      left: 22px;
+      transform: translateY(-10px);
+      transition: opacity 0.3s  0.1s, transform 0.4s ,visibility 0.2s  0.1s;
+      z-index: 3;
+    }
+    .nav-container a:hover{
+      color: rgba(0, 128, 0, 0.623);
+    }
+    .links .pages{
+      display: flex;
+      flex-direction: column;
+    }
+    div.shop:hover .pages{
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(-33px);
+      transition: all 0.3s linear;
+    }
+    .item .heart, .bag, .item2{
+      padding: 0 15px;
+    }
+    .nav-container .item{position: relative;
+      line-height: 103px;
+    }
+   .item .heart i::after{
+      content: '1';
+      position: absolute;
+      font-family: arial;
+      font-size: 10px;
+      font-weight: bold;
+      background-color:#41a109d8;
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      border-radius: 50%;
+      color: #fff;
+      text-align: center;
+      line-height: 15px;
+      top: 37px;
+      left: 29px; 
+    }
+    .item .bag i::after{
+      content: '3';
+      position: absolute;
+      font-family: arial;
+      font-size: 10px;
+      font-weight: bold;
+      background-color:#41a109d8;
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+      border-radius: 50%;
+      color: #fff;
+      text-align: center;
+      line-height: 15px;
+      top: 37px;
+    }
+    .item .item2{
+      display: flex;
+    }
+   .item .item2 p{
+      color: grey;
+    }
+/* End Of Website Header and Navigation Menu */
+
+/* Menu -Search - Whatsapp Container */
+  div.menu-search-whatsapp-container{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 35px;
+  }
+  .search, .whatsapp{
+    display: flex;
+  }
+  .department{
+    margin-left: 100px;
+    width: 280px;
+  }
+  .department ul{
+    list-style-type: none;
+    width: 100%;
+    border: 1px solid gray ;
+    margin-top: 20px;
+    line-height: 40px;
+  }
+  .department ul li{
+    margin-left: 40px;
+  }
+  .hide-menu{
+    margin-left: -300px;
+    visibility: hidden;
+    transition: 0.5s ease-in-out;
+  }
+  .bar i{
+    padding: 0 15px;
+    margin-left: -70px;
+  }
+  .department{
+    position: relative;
+    height: 510px;
+  }
+  .department::before{
+    content: '';
+    position: absolute;
+    height: 60px;
+    width: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 128, 0, 0.767);
+    height: 50px;
+  }
+  .bar{
+    position: absolute;  
+    text-align: center;
+    line-height: 50px;
+    color: #fff;
+    font-weight: bolder;
+  }
+  .bar{
+    position: relative;
+  }
+  .menu-search-whatsapp-container #arrow-up-icon{
+    transform: translateX(90px);
+    cursor: pointer;
+  }
+  .search{
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid gray;
+    width: 540px;
+    height: 50px;
+    transform: translateX(8px);
+    padding-left: 10px;
+  }
+  .search input{ 
+   outline: none;
+   border:1px solid grey;
+   border: none;
+   padding: 5px 5px ;
+  }
+  button{
+   border: none;
+   color: #fff;
+   padding: 5px 28px ;
+   background-color: rgba(41, 128, 0, 0.856);
+   font-weight: bolder;
+   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+  }
+  .cate{display: flex;
+    align-items: center;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+ .search .cate::after{
+    content: '';
+    width: 1px;
+    height: 20px;
+    background-color: rgba(128, 128, 128, 0.562);
+    position: absolute;
+    left: 170px;
+  }
+
+  .menu-search-whatsapp-container .whatsapp{
+    margin-right: 90px;
+  
+  }
+  .menu-search-whatsapp-container .whatsapp .icon i{
+    text-align: center;
+    margin-right: 18px;
+    background-color: rgba(128, 128, 128, 0.377);
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 50%;
+    color: rgba(0, 128, 0, 0.795);
+
+  }
+  .menu-search-whatsapp-container .whatsapp .num{
+    transform: translateY(5px);
+  }
+  .num .number{
+    font-size: 20px;
+    font-weight: bolder;
+  }
+  .num .support{
+    color: rgba(128, 128, 128, 0.651);
+    margin-top: 10px;
+    font-size: 14px;
+  }
+/* End Of Menu - Search - Whatsapp Container */
+/* Product Description */
+  .vegetables-image-container{
+    position: relative;
+  }
+  .vegetables-image-container img{
+    position: absolute;
+    bottom: 100px;
+    right: 80px;
+  }
+  div.vegetables-image-container img{
+    width: 790px;
+    height: 430px;
+    position: absolute;
+    transform: translateX(-110px);
+    bottom: 0;
+  }
+  .product-description{
+    position: relative;
+  }
+  .product-info .product-description p{
+    position: absolute;
+    transform: translateX(30px);
+  }
+  .product-description .item1{
+    color:#fff ;
+    font-weight: bolder;
+    top: -320px;
+    left: 550px;
+  }
+  .product-description .item3{
+    font-weight: bolder;
+    font-size: 50px;
+    top: -290px;
+    left: 550px;
+  }
+  .product-description .item4{
+    font-weight: bolder;
+    font-size: 50px;
+    top: -230px;
+    left: 550px;
+  }
+  .product-description .item5{
+    color:#fff;
+    font-weight: bolder;
+    top: -150px;
+    left: 550px;
+  }
+  .product-description p{
+    padding: 5px 0;
+  }
+  .product-description button{
+    padding: 10px 28px;
+    cursor: pointer;
+    transform: translateY(30px);
+    transform: translateX(30px);
+    background-color: rgba(128, 128, 128, 0.74);
+    border: 1px solid black;
+    box-shadow: 0 0 6px black;
+    position: absolute;
+    top: -115px;
+    left: 550px;
+  }
+  .product-description button:hover{
+    background-color: green;
+    border: 1px solid #fff;
+    box-shadow: 0 0 6px #fff;
+  }
+/* End Of Product Description */
